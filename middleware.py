@@ -1,6 +1,7 @@
 __author__ = 'savad'
 from django.conf import settings
 from django.http import HttpResponse
+from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import ugettext as _
 
 
@@ -25,7 +26,7 @@ def basic_authenticate(authentication):
     return username == authentication_username and password == authentication_password
 
 
-class BasicAuthenticationMiddleware(object):
+class BasicAuthenticationMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
         if not getattr(settings, 'BASIC_WWW_AUTHENTICATION', False):
@@ -36,3 +37,6 @@ class BasicAuthenticationMiddleware(object):
         if authenticated:
             return
         return basic_challenge()
+
+    def process_exception(self, request, exception):
+        return HttpResponse("in exception")
